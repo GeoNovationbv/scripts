@@ -20,7 +20,7 @@ $apacheTomcatInstallationFiles = Get-ChildItem -Path $apacheTomcatInstallationFi
 $apacheTomcatVersion = $apacheTomcatInstallationFiles[0].Basename.split('-')[2]
 
 #extract Apache Tomcat files and copy to correct directories
-#Expand-Archive -Path $apacheTomcatInstallationFiles[0].FullName 
+Expand-Archive -Path $apacheTomcatInstallationFiles[0].FullName 
     
 $extractedApacheTomcatDir = join-path -path $currentDirectory -ChildPath $apacheTomcatInstallationFiles[0].Basename
 
@@ -34,18 +34,18 @@ if (Test-Path -path $extractedApacheTomcatDir)
     $env:CATALINA_HOME = $CATALINA_HOME
 
     #create the new CATALINA_HOME folder
-    #New-Item $CATALINA_HOME -ItemType "directory"
+    New-Item $CATALINA_HOME -ItemType "directory"
 
     foreach ($apacheTomcatBinLibDir in Get-ChildItem -Path $apacheTomcatDir.FullName -Directory )
     {
         if ($apacheTomcatBinLibDir.BaseName -eq "bin" -Or $apacheTomcatBinLibDir.BaseName -eq "lib") {
-           #Move-Item -path $apacheTomcatBinLibDir.FullName -destination $CATALINA_HOME -Force
+           Move-Item -path $apacheTomcatBinLibDir.FullName -destination $CATALINA_HOME -Force
         }
     }
 
     #copies Apache Tomcat files 
     foreach ($apacheTomcatFile in Get-ChildItem -Path $apacheTomcatDir.FullName -File) {
-        #Move-Item $apacheTomcatFile.FullName $CATALINA_HOME -Force 
+        Move-Item $apacheTomcatFile.FullName $CATALINA_HOME -Force 
     }
 
     #verplaats mappen conf, logs , temp , webapps , work naar de app directries
@@ -66,7 +66,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
         if ($oldApacheTomcatService.Status -eq "Running") 
         {
             #stop-service -name $oldApacheTomcatService.Name
-            #$oldApacheTomcatService.WaitForStatus('Stopped','00:00:45')
+            $oldApacheTomcatService.WaitForStatus('Stopped','00:00:45')
         }
 
         if (-not (Test-Path -Path $CATALINA_BASE) ) {
@@ -99,7 +99,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
             {
                 $backupOldapacheTomcatWebAppsDirAppDir =  -join($config["ApplicationName"],"_old")
 
-                #Rename-Item -Path $apacheTomcatWebAppsDirAppDir -NewName $backupOldapacheTomcatWebAppsDirAppDir
+                Rename-Item -Path $apacheTomcatWebAppsDirAppDir -NewName $backupOldapacheTomcatWebAppsDirAppDir
             }
         }
 
@@ -136,19 +136,19 @@ if (Test-Path -path $extractedApacheTomcatDir)
         $apacheTomcatServiceName = "tomcat" + $apacheTomcatVersion + "-" + $config["serviceName"]
 
         #install Apache Tomcat service
-        #Start-Process .\service.bat -ArgumentList install,$apacheTomcatServiceName -Wait
+        Start-Process .\service.bat -ArgumentList install,$apacheTomcatServiceName -Wait
         
         #update the services with the settings
         $JvmMs = $config["JvmMs"]
         $JvmMx = $config["JvmMx"]
         $jvmOptions = $config["JvmOptions"]
-        #Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
+        Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
         
         $apacheTomcatService = Get-Service -Name $apacheTomcatServiceName
-        #Start-Service $apacheTomcatServiceName
-        #$apacheTomcatService.WaitForStatus('Running','00:00:15')
-        #Stop-Service $apacheTomcatServiceName
-        #$apacheTomcatService.WaitForStatus('Stopped','00:00:45')
+        Start-Service $apacheTomcatServiceName
+        $apacheTomcatService.WaitForStatus('Running','00:00:15')
+        Stop-Service $apacheTomcatServiceName
+        $apacheTomcatService.WaitForStatus('Stopped','00:00:45')
 
         #remove war file
         Set-Location -Path $apacheTomcatWebAppsDir
@@ -156,7 +156,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
 
         if ($geoserver_empty_data_dir = Get-ChildItem -Path $config["ApplicationName"] -Filter "data" -Directory) 
         {
-            #remove-item -path $geoserver_empty_data_dir.FullName -Recurse
+            remove-item -path $geoserver_empty_data_dir.FullName -Recurse
         }
 
         #geoserver extension files uitpakken
