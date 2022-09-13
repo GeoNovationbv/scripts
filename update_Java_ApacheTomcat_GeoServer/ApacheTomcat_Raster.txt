@@ -1,0 +1,10 @@
+serviceName=raster
+oldApacheTomcatConfDir=
+warFile=geoserver*.zip
+ApplicationName=rasterserver
+JvmMs=512
+JvmMx=512
+JvmOptions=-DGEOSERVER_CSRF_WHITELIST=kaartviewer.nl
+Geoserver_extensions=gdal;monitor
+OldGeoserverDataDir=
+NewGeoserverDataDir=

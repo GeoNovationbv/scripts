@@ -1,0 +1,7 @@
+serviceName=mapfish
+oldApacheTomcatConfDir=
+warFile=print-servlet-*.war
+ApplicationName=print
+JvmMs=512
+JvmMx=512
+JvmOptions=-Dprintapps.location=
