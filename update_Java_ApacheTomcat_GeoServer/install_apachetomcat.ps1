@@ -1,12 +1,16 @@
 ﻿Set-ExecutionPolicy RemoteSigned
 
-$currentDirectory = "D:\Ontwikkelingen kaartviewer\scripts\update_Java_ApacheTomcat_GeoServer"
+$currentDirectory = "C:\KaartViewer\data\scripts\update_Java_ApacheTomcat_GeoServer"
 Set-Location -Path $currentDirectory
 
 #applicatinoDir locatie waar Apache Tomcat data komt te staan (catalina_base)
-$applicationDir = "D:\Program Data\apache-tomcat"
+$applicationDir = "C:\KaartViewer\data\apache-tomcat"
 #appDir locatie waar Apache Tomcat applicatie data staat (catalina_home)
-$appDir = "D:\Tomcat"
+$appDir = "C:\KaartViewer\apps"
+
+      
+$env:JRE_HOME = $env:JAVA_HOME
+$env:JAVA_HOME = ""
 
 #updateConfigFiles files waar de configuraties in staan
 $updateConfigFiles = Get-ChildItem -Path $currentDirectory -Name -Include ApacheTomcat*.txt
@@ -143,9 +147,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
         #install Apache Tomcat service
         $CATALINA_HOME_bin = Join-Path -Path $CATALINA_HOME -ChildPath "bin"
         Set-Location $CATALINA_HOME_bin
-      
-        $env:JRE_HOME = $env:JAVA_HOME
-        $env:JAVA_HOME = ""
+
         $apacheTomcatServiceName = "tomcat" + $apacheTomcatVersion + "-" + $config["serviceName"]
 
         #install Apache Tomcat service
@@ -155,7 +157,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
         $JvmMs = $config["JvmMs"]
         $JvmMx = $config["JvmMx"]
         $jvmOptions = $config["JvmOptions"]
-        Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--Jvm=auto--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
+        Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--Jvm=auto,--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
         
         $apacheTomcatService = Get-Service -Name $apacheTomcatServiceName
         Start-Service $apacheTomcatServiceName
