@@ -72,6 +72,19 @@ if (Test-Path -path $extractedApacheTomcatDir)
         if (-not (Test-Path -Path $CATALINA_BASE) ) {
             New-Item $CATALINA_BASE -ItemType "directory"
 
+            $CATALINA_BASE_acl = Get-Acl -Path $CATALINA_BASE
+
+            $identity = "NT AUTHORITY\LocalService"
+            $fileSystemRights = "Modify"
+            $type = "Allow"
+
+            $fileSystemAccessRuleArgumentList = $identity, $fileSystemRights, $type
+            $fileSystemAccessRule = New-Object -TypeName System.Security.AccessControl.FileSystemAccessRule -ArgumentList $fileSystemAccessRuleArgumentList
+            
+            $CATALINA_BASE_acl.SetAccessRule($fileSystemAccessRule)
+            Set-Acl -Path $CATALINA_BASE -AclObject $CATALINA_BASE_acl
+
+
             foreach ($subDirsInApacheTomcat in Get-ChildItem -Path $apacheTomcatDir.FullName -Directory ) 
             {
                 if ($subDirsInApacheTomcat.name -eq "conf") {
@@ -142,7 +155,7 @@ if (Test-Path -path $extractedApacheTomcatDir)
         $JvmMs = $config["JvmMs"]
         $JvmMx = $config["JvmMx"]
         $jvmOptions = $config["JvmOptions"]
-        Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
+        Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,--Startup=auto,--Jvm=auto--LogLevel=error,--JvmMs=$JvmMs,--JvmMx=$JvmMx,++JvmOptions=$jvmOptions -Wait
         
         $apacheTomcatService = Get-Service -Name $apacheTomcatServiceName
         Start-Service $apacheTomcatServiceName
