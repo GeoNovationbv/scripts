@@ -1,6 +1,6 @@
 ﻿$mapFishService = get-service -Name *mapfish
 $jarFileNameToReplace = "commons-text-1.6.jar"
-$newJarFilename = "commons-text-1.10.jar"
+$newJarFilename = "commons-text-1.10.0.jar"
 
 $queryString = "name='" + $mapFishService.Name + "'"
 
@@ -19,7 +19,7 @@ if (Test-path $mapfishInstanceExe.PathName.split()[0])
 
         Rename-Item -Path $oldJarFile -newName "_commons-text-1.6.jar"
         
-        $newJarFilename = Get-ChildItem -Path $PSScriptRoot -Name $newJarFilename
+        $newJarFilename = Get-ChildItem -Name $newJarFilename
         Write-Output $newJarFilename
 
         $renamedJarFile = Rename-Item -Path $newJarFilename -newName $jarFileNameToReplace -PassThru
