@@ -12,21 +12,34 @@ if (Test-path $mapfishInstanceExe.PathName.split()[0])
     $mapfishInstanceExePath = Get-Item -Path $mapfishInstanceExe.PathName.split()[0]
 
     $libPath = Join-Path -Path $mapfishInstanceExePath.Directory.Parent.FullName -ChildPath webapps\print\WEB-INF\lib
+
+    Write-Output "Pad waarop de jar file wordt vervangen: " $libPath
     
     $oldJarFile = Join-Path -Path $libPath -ChildPath $jarFileNameToReplace
     if (Test-path $oldJarFile) {
+        #Stop MapFish service
+        Write-Output "service: $($mapFishService.Name) wordt gestopt"
         Stop-Service $mapFishService.Name
+        $mapFishService.WaitForStatus("Stopped", '00:00:30')
+        Write-Output "service: $($mapFishService.Name) status: $($mapFishService.Status)"
 
-        Rename-Item -Path $oldJarFile -newName "_commons-text-1.6.jar"
-        
+        #rename old jar file
+        $renamedOldJarFile = Rename-Item -Path $oldJarFile -newName "_commons-text-1.6.jar" -PassThru
+        Write-Output "$($oldJarFile) hernoemt naar: $($renamedOldJarFile)"
+
+        #rename new jar file
         $newJarFilename = Get-ChildItem -Name $newJarFilename
-        Write-Output $newJarFilename
-
         $renamedJarFile = Rename-Item -Path $newJarFilename -newName $jarFileNameToReplace -PassThru
 
-        Copy-item -Path $renamedJarFile -Destination $oldJarFile -Force
+        #copy new jar file
+        $newJarFileLocation = Copy-item -Path $renamedJarFile -Destination $oldJarFile -Force -PassThru
+        Write-Output "$($newJarFileLocation) geplaatst"
 
+        #start MapFish service
+        Write-Output "service: $($mapFishService.Name) wordt gestart"
         Start-Service $mapFishService.Name
+        $mapFishService.WaitForStatus("Running", '00:00:30')
+        Write-Output "service: $($mapFishService.Name) status: $($mapFishService.Status)"
     }
 
 }
