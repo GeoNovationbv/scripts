@@ -1,4 +1,5 @@
 serviceName=raster
+catalina_base=D:\\Program Data\\apache-tomcat\\raster
 oldApacheTomcatConfDir=
 warFile=geoserver*.zip
 ApplicationName=rasterserver

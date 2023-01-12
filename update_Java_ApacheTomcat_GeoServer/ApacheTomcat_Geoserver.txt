@@ -1,4 +1,5 @@
 serviceName=vector
+catalina_base=D:\\Program Data\\apache-tomcat\\vector
 oldApacheTomcatConfDir=
 warFile=geoserver*.zip
 ApplicationName=geoserver
@@ -7,5 +8,4 @@ JvmMx=512
 JvmOptions=-Dorg.geotools.localDateTimeHandling=true;-DGEOSERVER_CSRF_WHITELIST=kaartviewer.nl
 Geoserver_extensions=css;excel;monitor;wps
 OldGeoserverDataDir=
-NewGeoserverDataDir=
-
+NewGeoserverDataDir=D:\\Program Data\\Geoserver-221
