@@ -31,7 +31,7 @@ $apacheTomcatInstallationFiles = Get-ChildItem -Path $apacheTomcatInstallationFi
 $apacheTomcatVersion = $apacheTomcatInstallationFiles[0].Basename.split('-')[2]
 
 #extract Apache Tomcat files and copy to correct directories 
-#Expand-Archive $apacheTomcatInstallationFiles[0].FullName -DestinationPath $apacheTomcatInstallationFileDir -Force
+Expand-Archive $apacheTomcatInstallationFiles[0].FullName -DestinationPath $apacheTomcatInstallationFileDir -Force
 $extractedApacheTomcatDir = Get-ChildItem -Path $apacheTomcatInstallationFileDir -Directory
 
 $extractedApacheTomcatDirPath = Join-Path -Path $apacheTomcatInstallationFileDir -ChildPath $extractedApacheTomcatDir
