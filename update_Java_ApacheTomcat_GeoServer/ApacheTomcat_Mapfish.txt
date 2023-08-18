@@ -1,8 +1,0 @@
-serviceName=mapfish
-catalina_base=D:\\Program Data\\apache-tomcat\\mapfish
-oldApacheTomcatConfDir=
-warFile=print-servlet-*.war
-ApplicationName=print
-JvmMs=512
-JvmMx=512
-JvmOptions=-Dprintapps.location=D:\\Program Data\\print-apps
