@@ -1,3 +1,0 @@
-#locaties opgeven met \\
-#Tomcat applicatie map (catalina_home)
-appDir=D:\\Tomcat
