@@ -1,0 +1,9 @@
+serviceName=vector
+catalina_base=c:\\appdata\\apache-tomcat\\vector
+warFile=geoserver*.zip
+ApplicationName=geoserver
+JvmMs=512
+JvmMx=512
+JvmOptions=-Dorg.geotools.localDateTimeHandling=true;-DGEOSERVER_CSRF_WHITELIST=kaartviewer.nl
+Geoserver_extensions=css;excel;monitor;wps;geopkg-output
+GeoserverDataDir=
