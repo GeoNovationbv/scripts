@@ -1,5 +1,6 @@
 serviceName=vector
 catalina_base=c:\\appdata\\apache-tomcat\\vector
+oldApacheTomcatConfDir=
 warFile=geoserver*.zip
 ApplicationName=geoserver
 JvmMs=512

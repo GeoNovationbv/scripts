@@ -1,8 +1,9 @@
 serviceName=mapfish
-catalina_base=D:\\Program Data\\apache-tomcat\\mapfish
+catalina_base=C:\\appdata\\apache-tomcat\\mapfish
 oldApacheTomcatConfDir=
 warFile=print-servlet-*.war
 ApplicationName=print
 JvmMs=512
 JvmMx=512
-JvmOptions=-Dprintapps.location=D:\\Program Data\\mapfish\\print-apps;-Dlogging.config=D:\\Program Data\\mapfish\\logback.xml
+JvmOptions=-Dprintapps.location=C:\\appdata\\mapfish\\print-apps
+MapFishLoggingConfig=C:\\appdata\\mapfish\\logback.xml
