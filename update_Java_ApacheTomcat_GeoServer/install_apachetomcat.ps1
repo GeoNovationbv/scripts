@@ -256,8 +256,9 @@ Foreach ($updateConfigFile in $updateConfigFiles)
             #backup geoserver_data_dir
             $currentDate = Get-Date -Format "yyyy-MM-dd"
             $GeoServerDataDirBackupFolder = $config["GeoserverDataDir"] + "_backup_" + $currentDate 
-            #Copy-Item -Path (Get-Item -Path $config["GeoserverDataDir"] + "\*+" -Exclude ("data")).FullName -Destination $GeoServerDataDirBackupFolder -Force -Recurse
-            Copy-Item -Path $config["GeoserverDataDir"] -Destination $GeoServerDataDirBackupFolder -Force -Recurse
+
+            $geoserDataDir = $config["GeoserverDataDir"] + "\*"
+            Copy-Item -Path $geoserDataDir -Exclude @('geoserver*.log', 'data') -Destination $GeoServerDataDirBackupFolder -Force -Recurse
         }
 
         Remove-Item -path $empty_geoserver_data_dir.FullName -Recurse
