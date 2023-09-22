@@ -91,14 +91,7 @@ Foreach ($updateConfigFile in $updateConfigFiles)
         }
 
         #controleer het account wat de Apache Tomcat service uitvoert.
-        $oldApcheTomcatServiceRunAs = (Get-WmiObject Win32_Service -Filter "Name='$oldApacheTomcatService.Name'").StartName
-        if ( $oldApcheTomcatServiceRunAs -ne $null ) {
-            $ApachRunAsOtherUserMessage = "Oude Apache Tomcat service met naam: " + $oldApacheTomcatServiceName + " wordt uitgevoerd door account: " + $oldApcheTomcatServiceRunAs
-        }
-        else {
-            $ApachRunAsOtherUserMessage = "Oude Apache Tomcat service met naam: " + $oldApacheTomcatServiceName + " wordt uitgevoerd door een system account"
-        }
-        Write-Output $ApachRunAsOtherUserMessage
+        $oldApcheTomcatServiceRunAs = ( Get-CimInstance Win32_Service -Filter "Name='$oldApacheTomcatServiceName'") | Out-String Select-Object StartName
     }
     else {
         if (-not $reinstallServices) {
@@ -257,8 +250,8 @@ Foreach ($updateConfigFile in $updateConfigFiles)
             $currentDate = Get-Date -Format "yyyy-MM-dd"
             $GeoServerDataDirBackupFolder = $config["GeoserverDataDir"] + "_backup_" + $currentDate 
 
-            $geoserDataDir = $config["GeoserverDataDir"] + "\*"
-            Copy-Item -Path $geoserDataDir -Exclude @('geoserver*.log', 'data') -Destination $GeoServerDataDirBackupFolder -Force -Recurse
+            $geoserDataDir = $config["GeoserverDataDir"]+"\*"
+            Copy-Item -Path $geoserDataDir -Exclude ('geoserver*.log', 'data') -Destination $GeoServerDataDirBackupFolder -Force -Recurse
         }
 
         Remove-Item -path $empty_geoserver_data_dir.FullName -Recurse
@@ -272,7 +265,7 @@ Foreach ($updateConfigFile in $updateConfigFiles)
         Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,++JvmOptions=$dgeoserver_data_dir -Wait
     }
     
-    if ( $oldApcheTomcatServiceRunAs -eq $null ) {
+    if ( $oldApcheTomcatServiceRunAs.StartsWith("NT Authority\Local") ) {
         Start-Service $apacheTomcatServiceName
     }
     else {
