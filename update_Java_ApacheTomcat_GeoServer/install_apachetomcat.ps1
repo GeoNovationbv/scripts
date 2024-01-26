@@ -82,16 +82,11 @@ Foreach ($updateConfigFile in $updateConfigFiles)
     $oldApacheTomcatServiceName = $oldApacheTomcatService.Name
 
     if(-Not ($oldApacheTomcatService -eq $null) ) {
-        $ApachRunAsOtherUserMessage = ""
-
         if ($oldApacheTomcatService.Status -eq "Running") 
         {
             stop-service -name $oldApacheTomcatService.Name -Verbose:$false
             $oldApacheTomcatService.WaitForStatus('Stopped','00:00:45')
         }
-
-        #controleer het account wat de Apache Tomcat service uitvoert.
-        $oldApcheTomcatServiceRunAs = ( Get-CimInstance Win32_Service -Filter "Name='$oldApacheTomcatServiceName'") | Out-String Select-Object StartName
     }
     else {
         if (-not $reinstallServices) {
@@ -172,8 +167,9 @@ Foreach ($updateConfigFile in $updateConfigFiles)
 
     if ($reinstallServices) {
         #install Apache Tomcat service
-        if ( $oldApacheTomcatService -ne $null -and $oldApcheTomcatServiceRunAs -eq $null ) {
-            $oldApacheTomcatServiceRemoved = "Oude Apache Tomcat service met naam: " + $oldApacheTomcatServiceName + " wordt verwijderd."
+        if ( $oldApacheTomcatService -ne $null ) {
+            $oldApacheTomcatServiceRemoved = "Oude Apache Tomcat service met naam: " + $oldApacheTomcatService.Name + " wordt verwijderd."
+            write-output $oldApacheTomcatServiceRemoved
             Start-Process .\service.bat -ArgumentList remove, $oldApacheTomcatService.Name -Wait
         }
         #install Apache Tomcat service
@@ -251,7 +247,8 @@ Foreach ($updateConfigFile in $updateConfigFiles)
             $GeoServerDataDirBackupFolder = $config["GeoserverDataDir"] + "_backup_" + $currentDate 
 
             $geoserDataDir = $config["GeoserverDataDir"]+"\*"
-            Copy-Item -Path $geoserDataDir -Exclude ('geoserver*.log', 'data') -Destination $GeoServerDataDirBackupFolder -Force -Recurse
+            Write-Output "Geoserver data: " $geoserDataDir
+            Copy-Item -Path (Get-Item -Path $geoserDataDir -Exclude ('data')).FullName -Destination $GeoServerDataDirBackupFolder -Force -Recurse
         }
 
         Remove-Item -path $empty_geoserver_data_dir.FullName -Recurse
@@ -263,13 +260,6 @@ Foreach ($updateConfigFile in $updateConfigFiles)
         $dgeoserver_data_dir = "-DGEOSERVER_DATA_DIR=""$newGeoserverDataDir"""
 
         Start-Process .\tomcat9.exe -ArgumentList //US/$apacheTomcatServiceName,++JvmOptions=$dgeoserver_data_dir -Wait
-    }
-    
-    if ( $oldApcheTomcatServiceRunAs.StartsWith("NT Authority\Local") ) {
-        Start-Service $apacheTomcatServiceName
-    }
-    else {
-        Write-Output $apacheTomcatServiceName " nog niet gestart moet worden uitgevoerd door windows account: " + $oldApcheTomcatServiceRunAs
     }
 
     Set-Location -Path $currentDirectory
