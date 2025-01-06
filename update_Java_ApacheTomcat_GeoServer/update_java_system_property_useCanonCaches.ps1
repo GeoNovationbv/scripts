@@ -39,7 +39,7 @@ Foreach ($updateConfigFile in $updateConfigFiles)
         if ($apacheTomcatService.Status -eq "Running") 
         {
             stop-service -name $apacheTomcatService.Name -Verbose:$false
-            $oldApacheTomcatService.WaitForStatus('Stopped','00:00:45')
+            $apacheTomcatService.WaitForStatus('Stopped','00:00:45')
         }
     }
 
